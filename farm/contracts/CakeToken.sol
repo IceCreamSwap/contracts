@@ -22,7 +22,7 @@ contract CakeToken is BEP20('Ice Cream', 'iCream') {
         // mint 1 token to deployer to test pools
         mint(msg.sender, 1 ether);
 
-        // mint 2k $ICR to add in the initial liquidity pool
+        // mint 1k iCream to add in the initial liquidity pool
         mint(governance, 1000 ether);
 
     }
@@ -270,7 +270,7 @@ contract CakeToken is BEP20('Ice Cream', 'iCream') {
         require( governance == msg.sender, 'not governance' );
 
         // only if not called yet.
-        require( governance_blocked!=true ,'already-called');
+        require( governance_blocked, 'already-called');
 
         // block any new call
         governance_blocked = true;

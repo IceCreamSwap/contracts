@@ -137,8 +137,10 @@ contract MasterChef is Ownable {
         if (_withUpdate) {
             massUpdatePools();
         }
-        uint256 prevAllocPoint = poolInfo[_pid].allocPoint;
+
+        totalAllocPoint = totalAllocPoint.sub(poolInfo[_pid].allocPoint).add(_allocPoint);
         poolInfo[_pid].allocPoint = _allocPoint;
+
     }
 
     // Return reward multiplier over the given _from to _to block.
@@ -200,11 +202,11 @@ contract MasterChef is Ownable {
         PoolInfo storage pool = poolInfo[_pid];
         UserInfo storage user = userInfo[_pid][msg.sender];
         updatePool(_pid);
-        uint256 _tax ;
+        uint256 _tax = 0;
         if (user.amount > 0) {
             uint256 pending = user.amount.mul(pool.accCakePerShare).div(1e12).sub(user.rewardDebt);
             if(pending > 0) {
-                safeCakeTransfer(msg.sender, pending);
+                _tax = safeCakeTransfer(msg.sender, pending);
             }
         }
         if (_amount > 0) {
@@ -273,8 +275,9 @@ contract MasterChef is Ownable {
     function safeCakeTransfer(address _to, uint256 _total) internal returns(uint256) {
 
         (uint256 _amount, uint256 _tax) = taxUser(_total);
-        if( _tax > 0 ) // send the taxed amount to be burned
+        if( _tax > 0 ){ // send the taxed amount to be burned
             cake.transfer(feeTo, _tax);
+        }
 
         uint256 cakeBal = cake.balanceOf(address(this));
         if (_amount > cakeBal) {
@@ -292,10 +295,12 @@ contract MasterChef is Ownable {
     }
 
     function taxUser( uint256 _total ) private returns (uint256 _amount, uint256 _amount_tax ){
-        if( tax == 0 ) return( _total, 0 );
+        if( tax == 0 ){
+            return( _total, 0 );
+        }
         if( tax > 0 ){
             _amount_tax = _total.mul(tax).div(1000);
-            _amount = _total - _amount_tax;
+            _amount = _total.sub(_amount_tax);
         }
         return( _amount, _amount_tax );
     }
