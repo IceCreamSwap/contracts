@@ -61,7 +61,6 @@ contract MasterChef is Ownable {
     // The milkshake TOKEN!
     MilkShake public milkshake;
     address public devFee;
-    address public governance;
     // CREAM tokens created per block.
     uint256 public creamPerBlock;
     // Bonus muliplier for early cream makers.
@@ -84,7 +83,6 @@ contract MasterChef is Ownable {
     constructor(
         CreamToken _cream,
         MilkShake _milkshake,
-        address _governance,
         address _devFee,
         uint256 _creamPerBlock,
         uint256 _startBlock,
@@ -93,8 +91,6 @@ contract MasterChef is Ownable {
         cream = _cream;
         milkshake = _milkshake;
 
-
-        governance = _governance;
         devFee = _devFee;
         creamPerBlock = _creamPerBlock;
         startBlock = _startBlock;
@@ -311,30 +307,6 @@ contract MasterChef is Ownable {
         user.rewardDebt = 0;
     }
 
-    // Update dev address by the previous dev.
-    function dev(address _governance) public {
-        require(msg.sender == _governance || msg.sender == owner(), "governance-only");
-        governance = _governance;
-    }
-
-    // allow admin update, no risk of rug pull
-    function updateMultiplier(uint256 multiplierNumber) public {
-        require(msg.sender == governance || msg.sender == owner(), "governance-only");
-        BONUS_MULTIPLIER = multiplierNumber;
-    }
-
-    // allow admin update, no risk of rug pull
-    function updateBonus(uint256 _bonusEndBlock) public {
-        require(msg.sender == governance || msg.sender == owner(), "governance-only");
-        bonusEndBlock = _bonusEndBlock;
-    }
-
-    // allow admin update, no risk of rug pull
-    function updateCreamPerBlock(uint256 _creamPerBlock) public {
-        require(msg.sender == governance || msg.sender == owner(), "governance-only");
-        creamPerBlock = _creamPerBlock;
-    }
-
     // Safe cream transfer function, just in case if rounding error causes pool to not have enough CREAMs.
     function safeCreamTransfer(address _to, uint256 _total) internal {
         milkshake.safeCreamTransfer(_to, _total);
@@ -343,4 +315,22 @@ contract MasterChef is Ownable {
         require(_pid < poolInfo.length, "validatePool: pool exists?");
         _;
     }
+
+
+    function updateMultiplier(uint256 _multiplierNumber) public onlyOwner {
+        BONUS_MULTIPLIER = _multiplierNumber;
+    }
+
+    function updateBonus(uint256 _bonusEndBlock) public onlyOwner {
+        bonusEndBlock = _bonusEndBlock;
+    }
+
+    function updateCreamPerBlock(uint256 _creamPerBlock) public onlyOwner {
+        creamPerBlock = _creamPerBlock;
+    }
+
+    function setDevFee(address _devFee) public onlyOwner {
+        devFee = _devFee;
+    }
+
 }

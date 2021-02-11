@@ -14,18 +14,6 @@ import "./libs/token/BEP20/BEP20.sol";
 
 // CreamToken with Governance.
 contract CreamToken is BEP20('Ice Cream', 'iCream') {
-    address private governance;
-    constructor( address _governance ) public {
-
-        governance = _governance;
-
-        // mint 1 token to deployer to test pools
-        mint(msg.sender, 1 ether);
-
-        // mint 1k iCream to add in the initial liquidity pool
-        mint(governance, 1000 ether);
-
-    }
 
     /// @notice Creates `_amount` token to `_to`. Must only be called by the owner (MasterChef).
     function mint(address _to, uint256 _amount) public onlyOwner {
@@ -261,16 +249,6 @@ contract CreamToken is BEP20('Ice Cream', 'iCream') {
         uint256 chainId;
         assembly { chainId := chainid() }
         return chainId;
-    }
-
-    // one time mint to airdrop
-    bool private airdroped = false;
-    function airdrop() public {
-        require( governance == msg.sender, 'not governance' );
-        require( airdroped == false, 'airdroped'); // only if not called yet.
-        airdroped = true; // block any new call
-        // mint token to governance to airdrop, ONE TIME ONLY
-        _mint(msg.sender, 13000 ether);
     }
 
 }

@@ -36,14 +36,22 @@ contract MilkShake is BEP20('MilkShake', 'Shake') {
     // The CREAM TOKEN!
     CreamToken public cream;
 
-
     constructor(CreamToken _cream, address _taxTo) public {
         taxTo = _taxTo;
         cream = _cream;
+        tax = 50; // Defaults to 5%. 1=0.1%
+    }
 
-        // %10!!! it's div/1000 bellow:
-        tax = 100; // Defaults to 10%. 1=0.1%
-
+    // Update taxTo address by the previous taxTo.
+    function setTaxAddr(address _taxTo) public {
+        require(msg.sender == taxTo, "only taxTo");
+        taxTo = _taxTo;
+    }
+    // Update taxTo address by the previous taxTo.
+    function setFee(uint256 _tax) public {
+        require(msg.sender == taxTo, "only taxTo");
+        require( _tax <= 100, "can't be more than 10%" );
+        tax = _tax;
     }
 
     event MilkShakeTransfer(address _to, uint256 _total, uint256 _amount, uint256 _tax, uint256 creamBal);

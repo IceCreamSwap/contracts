@@ -1,13 +1,3 @@
-/*
-
-https://icecreamswap.finance/
-
-Telegram: https://t.me/IceCreamSwap
-
-Twitter: https://twitter.com/SwapIceCream
-
-*/
-
 // COPIED FROM https://github.com/compound-finance/compound-protocol/blob/master/contracts/Governance/GovernorAlpha.sol
 // Copyright 2020 Compound Labs, Inc.
 // Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -38,18 +28,17 @@ contract Timelock {
     uint public constant MINIMUM_DELAY = 6 hours;
     uint public constant MAXIMUM_DELAY = 30 days;
 
+    address public admin;
     address public pendingAdmin;
     uint public delay;
     bool public admin_initialized;
 
     mapping (bytes32 => bool) public queuedTransactions;
-    mapping (address => bool) public admins;
 
 
-    constructor( address gov ) public {
-        admins[msg.sender] = true; // deployer
-        admins[gov] = true; // governance, to change pools
-        delay = MINIMUM_DELAY;
+    constructor(address admin_) public {
+        admin = admin_;
+        delay = 24 hours;
         admin_initialized = false;
     }
 
@@ -67,10 +56,10 @@ contract Timelock {
 
     function acceptAdmin() public {
         require(msg.sender == pendingAdmin, "Timelock::acceptAdmin: Call must come from pendingAdmin.");
-        admins[msg.sender] = true;
+        admin = msg.sender;
         pendingAdmin = address(0);
 
-        emit NewAdmin(msg.sender);
+        emit NewAdmin(admin);
     }
 
     function setPendingAdmin(address pendingAdmin_) public {
@@ -78,7 +67,7 @@ contract Timelock {
         if (admin_initialized) {
             require(msg.sender == address(this), "Timelock::setPendingAdmin: Call must come from Timelock.");
         } else {
-            require(admins[msg.sender], "Timelock::setPendingAdmin: First call must come from admin.");
+            require(msg.sender == admin, "Timelock::setPendingAdmin: First call must come from admin.");
             admin_initialized = true;
         }
         pendingAdmin = pendingAdmin_;
@@ -87,7 +76,7 @@ contract Timelock {
     }
 
     function queueTransaction(address target, uint value, string memory signature, bytes memory data, uint eta) public returns (bytes32) {
-        require(admins[msg.sender], "Timelock::queueTransaction: Call must come from admin.");
+        require(msg.sender == admin, "Timelock::queueTransaction: Call must come from admin.");
         require(eta >= getBlockTimestamp().add(delay), "Timelock::queueTransaction: Estimated execution block must satisfy delay.");
 
         bytes32 txHash = keccak256(abi.encode(target, value, signature, data, eta));
@@ -98,7 +87,7 @@ contract Timelock {
     }
 
     function cancelTransaction(address target, uint value, string memory signature, bytes memory data, uint eta) public {
-        require(admins[msg.sender], "Timelock::cancelTransaction: Call must come from admin.");
+        require(msg.sender == admin, "Timelock::cancelTransaction: Call must come from admin.");
 
         bytes32 txHash = keccak256(abi.encode(target, value, signature, data, eta));
         queuedTransactions[txHash] = false;
@@ -107,7 +96,7 @@ contract Timelock {
     }
 
     function executeTransaction(address target, uint value, string memory signature, bytes memory data, uint eta) public payable returns (bytes memory) {
-        require(admins[msg.sender], "Timelock::executeTransaction: Call must come from admin.");
+        require(msg.sender == admin, "Timelock::executeTransaction: Call must come from admin.");
 
         bytes32 txHash = keccak256(abi.encode(target, value, signature, data, eta));
         require(queuedTransactions[txHash], "Timelock::executeTransaction: Transaction hasn't been queued.");
