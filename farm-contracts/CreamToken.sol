@@ -13,7 +13,7 @@ pragma solidity 0.6.12;
 import "./libs/token/BEP20/BEP20.sol";
 
 // CreamToken with Governance.
-contract CreamToken is BEP20('Ice Cream', 'iCream') {
+contract CreamToken is BEP20('IceCream', 'ICS') {
 
     /// @notice Creates `_amount` token to `_to`. Must only be called by the owner (MasterChef).
     function mint(address _to, uint256 _amount) public onlyOwner {
