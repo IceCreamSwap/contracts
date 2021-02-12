@@ -337,4 +337,14 @@ contract MasterChef is Ownable {
         devFee = _devFee;
     }
 
+    // allow to change tax treasure via timelock
+    function setTaxAddr(address _taxTo) public onlyOwner {
+        milkshake.setTaxAddr(_taxTo);
+    }
+
+    // allow to change tax via timelock
+    function setTax(uint256 _tax) public onlyOwner {
+        require( _tax <= 100, "can't be more than 10%" );
+        milkshake.setTax(_tax);
+    }
 }
