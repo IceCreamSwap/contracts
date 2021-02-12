@@ -321,29 +321,29 @@ contract MasterChef is Ownable {
     }
 
 
-    function updateMultiplier(uint256 _multiplierNumber) public onlyOwner {
+    function updateMultiplier(uint256 _multiplierNumber) external onlyOwner {
         BONUS_MULTIPLIER = _multiplierNumber;
     }
 
-    function updateBonus(uint256 _bonusEndBlock) public onlyOwner {
+    function updateBonus(uint256 _bonusEndBlock) external onlyOwner {
         bonusEndBlock = _bonusEndBlock;
     }
 
-    function updateCreamPerBlock(uint256 _creamPerBlock) public onlyOwner {
+    function updateCreamPerBlock(uint256 _creamPerBlock) external onlyOwner {
         creamPerBlock = _creamPerBlock;
     }
 
-    function setDevFee(address _devFee) public onlyOwner {
+    function setDevFee(address _devFee) external onlyOwner {
         devFee = _devFee;
     }
 
     // allow to change tax treasure via timelock
-    function setTaxAddr(address _taxTo) public onlyOwner {
+    function setTaxAddr(address _taxTo) external onlyOwner {
         milkshake.setTaxAddr(_taxTo);
     }
 
     // allow to change tax via timelock
-    function setTax(uint256 _tax) public onlyOwner {
+    function setTax(uint256 _tax) external onlyOwner {
         require( _tax <= 100, "can't be more than 10%" );
         milkshake.setTax(_tax);
     }
