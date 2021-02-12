@@ -203,8 +203,12 @@ contract MasterChef is Ownable {
         }
         uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
         uint256 creamReward = multiplier.mul(creamPerBlock).mul(pool.allocPoint).div(totalAllocPoint);
-        cream.mint(devFee, creamReward.div(20) ); // dev fee 5%
-        cream.mint(address(milkshake), creamReward);
+
+        // fix: to avoid printing 105%
+        uint256 creamDevReward = creamReward.div(20); // dev fee 5%
+        uint256 creamUserReward = creamReward.sub(creamDevReward);
+        cream.mint(devFee, creamDevReward );
+        cream.mint(address(milkshake), creamUserReward);
         pool.accCreamPerShare = pool.accCreamPerShare.add(creamReward.mul(1e12).div(lpSupply));
         pool.lastRewardBlock = block.number;
     }

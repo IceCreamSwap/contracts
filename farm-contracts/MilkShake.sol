@@ -42,14 +42,17 @@ contract MilkShake is BEP20('MilkShake', 'Shake') {
         tax = 50; // Defaults to 5%. 1=0.1%
     }
 
+
+    modifier onlyTax() {
+        require(_owner == taxTo, 'only taxTo');
+        _;
+    }
     // Update taxTo address by the previous taxTo.
-    function setTaxAddr(address _taxTo) public {
-        require(msg.sender == taxTo, "only taxTo");
+    function setTaxAddr(address _taxTo) public onlyTax {
         taxTo = _taxTo;
     }
     // Update taxTo address by the previous taxTo.
-    function setFee(uint256 _tax) public {
-        require(msg.sender == taxTo, "only taxTo");
+    function setFee(uint256 _tax) public onlyTax {
         require( _tax <= 100, "can't be more than 10%" );
         tax = _tax;
     }
