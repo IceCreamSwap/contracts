@@ -45,7 +45,7 @@ contract SmartChef is Ownable {
     uint256 public rewardPerBlock;
 
     // Info of each pool.
-    PoolInfo[] public poolInfo;
+    PoolInfo public pool;
     // Info of each user that stakes LP tokens.
     mapping (address => UserInfo) public userInfo;
     // Total allocation poitns. Must be the sum of all allocation points in all pools.
@@ -76,12 +76,12 @@ contract SmartChef is Ownable {
         bonusEndBlock = _bonusEndBlock;
 
         // staking pool
-        poolInfo.push(PoolInfo({
+        pool = PoolInfo({
         lpToken: _syrup,
         allocPoint: 1000,
         lastRewardBlock: startBlock,
         accCakePerShare: 0
-        }));
+        });
 
         totalAllocPoint = 1000;
 
@@ -90,25 +90,11 @@ contract SmartChef is Ownable {
 
     }
 
-    function configure(
-        uint256 _rewardPerBlock,
-        uint256 _startBlock,
-        uint256 _bonusEndBlock ) public
-    {
-        require(msg.sender == governance || msg.sender == owner(), "governance-only");
-        rewardPerBlock = _rewardPerBlock;
-        startBlock = _startBlock;
-        bonusEndBlock = _bonusEndBlock;
-        poolInfo[0].lastRewardBlock = startBlock;
-    }
-
-    function startReward() public {
-        require(msg.sender == governance || msg.sender == owner(), "governance-only");
+    function startReward() external onlyOwner {
         startBlock = block.number;
-        poolInfo[0].lastRewardBlock = startBlock;
+        pool.lastRewardBlock = startBlock;
     }
-    function stopReward() public {
-        require(msg.sender == governance || msg.sender == owner(), "governance-only");
+    function stopReward() external onlyOwner {
         bonusEndBlock = block.number;
     }
 
@@ -126,7 +112,6 @@ contract SmartChef is Ownable {
 
     // View function to see pending Reward on frontend.
     function pendingReward(address _user) external view returns (uint256) {
-        PoolInfo storage pool = poolInfo[0];
         UserInfo storage user = userInfo[_user];
         uint256 accCakePerShare = pool.accCakePerShare;
         uint256 lpSupply = pool.lpToken.balanceOf(address(this));
@@ -139,8 +124,7 @@ contract SmartChef is Ownable {
     }
 
     // Update reward variables of the given pool to be up-to-date.
-    function updatePool(uint256 _pid) public {
-        PoolInfo storage pool = poolInfo[_pid];
+    function updatePool() public {
         if (block.number <= pool.lastRewardBlock) {
             return;
         }
@@ -157,19 +141,15 @@ contract SmartChef is Ownable {
 
     // Update reward variables for all pools. Be careful of gas spending!
     function massUpdatePools() public {
-        uint256 length = poolInfo.length;
-        for (uint256 pid = 0; pid < length; ++pid) {
-            updatePool(pid);
-        }
+        updatePool();
     }
 
 
     // Stake SYRUP tokens to SmartChef
     function deposit(uint256 _amount) public {
-        PoolInfo storage pool = poolInfo[0];
         UserInfo storage user = userInfo[msg.sender];
 
-        updatePool(0);
+        updatePool();
         if (user.amount > 0) {
             uint256 pending = user.amount.mul(pool.accCakePerShare).div(1e23).sub(user.rewardDebt);
             if(pending > 0) {
@@ -187,10 +167,9 @@ contract SmartChef is Ownable {
 
     // Withdraw SYRUP tokens from STAKING.
     function withdraw(uint256 _amount) public {
-        PoolInfo storage pool = poolInfo[0];
         UserInfo storage user = userInfo[msg.sender];
         require(user.amount >= _amount, "withdraw: not good");
-        updatePool(0);
+        updatePool();
         uint256 pending = user.amount.mul(pool.accCakePerShare).div(1e23).sub(user.rewardDebt);
         if(pending > 0) {
             rewardToken.safeTransfer(address(msg.sender), pending);
@@ -206,7 +185,6 @@ contract SmartChef is Ownable {
 
     // Withdraw without caring about rewards. EMERGENCY ONLY.
     function emergencyWithdraw() public {
-        PoolInfo storage pool = poolInfo[0];
         UserInfo storage user = userInfo[msg.sender];
         pool.lpToken.safeTransfer(address(msg.sender), user.amount);
         user.amount = 0;
