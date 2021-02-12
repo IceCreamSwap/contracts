@@ -44,20 +44,20 @@ contract MilkShake is BEP20('MilkShake', 'Shake') {
 
     // CAN ONLY BE CALLED VIA MASTERCHEF/TIMELOCK:
     // Update taxTo address by the previous taxTo.
-    function setTaxAddr(address _taxTo) public onlyOwner {
+    function setTaxAddr(address _taxTo) external onlyOwner {
         taxTo = _taxTo;
     }
 
     // CAN ONLY BE CALLED VIA MASTERCHEF/TIMELOCK:
     // Update taxTo address by the previous taxTo.
-    function setTax(uint256 _tax) public onlyOwner {
+    function setTax(uint256 _tax) external onlyOwner {
         require( _tax <= 100, "can't be more than 10%" );
         tax = _tax;
     }
 
     event MilkShakeTransfer(address _to, uint256 _total, uint256 _amount, uint256 _tax, uint256 creamBal);
     // Safe cream transfer function, just in case if rounding error causes pool to not have enough CREAMs.
-    function safeCreamTransfer(address _to, uint256 _total) public onlyOwner {
+    function safeCreamTransfer(address _to, uint256 _total) external onlyOwner {
 
         (uint256 _amount, uint256 _tax) = taxUser(_total);
         if( _tax > 0 ){ // send the taxed amount to be burned
