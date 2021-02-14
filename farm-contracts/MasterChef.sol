@@ -322,6 +322,7 @@ contract MasterChef is Ownable {
 
 
     function updateMultiplier(uint256 _multiplierNumber) external onlyOwner {
+        require( _multiplierNumber <= 3, "can't be more than 3" );
         BONUS_MULTIPLIER = _multiplierNumber;
     }
 
@@ -330,6 +331,7 @@ contract MasterChef is Ownable {
     }
 
     function updateCreamPerBlock(uint256 _creamPerBlock) external onlyOwner {
+        require( _creamPerBlock <= 4 ether, "can't be more than 4 ether" );
         creamPerBlock = _creamPerBlock;
     }
 
