@@ -60,7 +60,7 @@ contract MasterChef is Ownable {
     CreamToken public cream;
     // The milkshake TOKEN!
     MilkShake public milkshake;
-    address public devFee;
+    address public devFeeAddr;
     // CREAM tokens created per block.
     uint256 public creamPerBlock;
     // Bonus muliplier for early cream makers.
@@ -83,7 +83,7 @@ contract MasterChef is Ownable {
     constructor(
         CreamToken _cream,
         MilkShake _milkshake,
-        address _devFee,
+        address _devFeeAddr,
         uint256 _creamPerBlock,
         uint256 _startBlock,
         uint256 _multiplier
@@ -91,7 +91,7 @@ contract MasterChef is Ownable {
         cream = _cream;
         milkshake = _milkshake;
 
-        devFee = _devFee;
+        devFeeAddr = _devFeeAddr;
         creamPerBlock = _creamPerBlock;
         startBlock = _startBlock;
         BONUS_MULTIPLIER = _multiplier;
@@ -207,7 +207,7 @@ contract MasterChef is Ownable {
         // fix: to avoid printing 105%
         uint256 creamDevReward = creamReward.div(20); // dev fee 5%
         uint256 creamUserReward = creamReward.sub(creamDevReward);
-        cream.mint(devFee, creamDevReward );
+        cream.mint(devFeeAddr, creamDevReward );
         cream.mint(address(milkshake), creamUserReward);
         pool.accCreamPerShare = pool.accCreamPerShare.add(creamReward.mul(1e12).div(lpSupply));
         pool.lastRewardBlock = block.number;
@@ -335,8 +335,8 @@ contract MasterChef is Ownable {
         creamPerBlock = _creamPerBlock;
     }
 
-    function setDevFee(address _devFee) external onlyOwner {
-        devFee = _devFee;
+    function setDevFee(address _devFeeAddr) external onlyOwner {
+        devFeeAddr = _devFeeAddr;
     }
 
     // allow to change tax treasure via timelock

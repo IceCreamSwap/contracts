@@ -17,7 +17,6 @@ contract UniswapV2Pair is UniswapV2ERC20 {
     address public factory;
     address public token0;
     address public token1;
-    //address payable fee_to;
 
     uint112 private reserve0;           // uses single storage slot, accessible via getReserves
     uint112 private reserve1;           // uses single storage slot, accessible via getReserves
@@ -60,7 +59,6 @@ contract UniswapV2Pair is UniswapV2ERC20 {
 
     constructor() public {
         factory = msg.sender;
-        //fee_to = IUniswapV2Factory(msg.sender).feeTo();
     }
 
     // called once by the factory at time of deployment

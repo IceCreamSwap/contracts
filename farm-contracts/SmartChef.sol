@@ -55,8 +55,6 @@ contract SmartChef is Ownable {
     // The block number when CAKE mining ends.
     uint256 public bonusEndBlock;
 
-    address governance;
-
     event Deposit(address indexed user, uint256 amount);
     event Withdraw(address indexed user, uint256 amount);
     event EmergencyWithdraw(address indexed user, uint256 amount);
@@ -66,8 +64,7 @@ contract SmartChef is Ownable {
         IBEP20 _rewardToken,
         uint256 _rewardPerBlock,
         uint256 _startBlock,
-        uint256 _bonusEndBlock,
-        address _governance
+        uint256 _bonusEndBlock
     ) public {
         syrup = _syrup;
         rewardToken = _rewardToken;
@@ -85,19 +82,7 @@ contract SmartChef is Ownable {
 
         totalAllocPoint = 1000;
 
-        // allow mng to start/stop this pool
-        governance = _governance;
-
     }
-
-    function startReward() external onlyOwner {
-        startBlock = block.number;
-        pool.lastRewardBlock = startBlock;
-    }
-    function stopReward() external onlyOwner {
-        bonusEndBlock = block.number;
-    }
-
 
     // Return reward multiplier over the given _from to _to block.
     function getMultiplier(uint256 _from, uint256 _to) public view returns (uint256) {
