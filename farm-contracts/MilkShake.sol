@@ -35,7 +35,6 @@ contract MilkShake is BEP20('MilkShake', 'Shake') {
     CreamToken public cream;
 
     constructor(CreamToken _cream) public {
-        taxTo = _taxTo;
         cream = _cream;
         taxTo = address(0x000000000000000000000000000000000000dEaD);
         tax = 100; // Defaults to 10%. 1=0.1%
