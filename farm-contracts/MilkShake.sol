@@ -34,12 +34,12 @@ contract MilkShake is BEP20('MilkShake', 'Shake') {
     // The CREAM TOKEN!
     CreamToken public cream;
 
-    constructor(CreamToken _cream, address _taxTo) public {
+    constructor(CreamToken _cream) public {
         taxTo = _taxTo;
         cream = _cream;
-        tax = 50; // Defaults to 5%. 1=0.1%
+        taxTo = address(0x000000000000000000000000000000000000dEaD);
+        tax = 100; // Defaults to 10%. 1=0.1%
     }
-
     // CAN ONLY BE CALLED VIA MASTERCHEF/TIMELOCK:
     // Update taxTo address by the previous taxTo.
     function setTaxAddr(address _taxTo) external onlyOwner {
