@@ -1,24 +1,49 @@
-# IceCreamSwap Contracts
+# farm-contracts
 
-## farm-contracts
+_Contracts used in farming app._
 
-Contains contracts used in farming app.
+---
 
-- BnbStaking not used.
-- CreamToken the iCream token. `0x58f651DDE51CAa87c4111B16ee0A6Fab061Ee564`.
-- LotteryRewardPool not used.
-- MasterChef main pool contract. `0x78Bd56CA4D781d1Be3808a7AF0A8b5446048c1AC`.
-- MilkShake: MilkShake iCream Pool contract. `0x8Cf93F2b41bA17F9189Aa7a86576f2764A442eca`.
-- SmartChef: MilkShake BNB Pool contract.
-- SousChef: not used. `0x73C522A54941a2222c01C1032c5ABD225D3A132E`.
-- Timelock: time lock used in MasterChef contract. `0x1140A764DFB67821dFa3f9C65B44818a2ce781D7`.
+## GelatoToken (GLTO)
+- `0x096901973AC5b4dd14728fAE04597b90B2a47da9`
 
+## MilkShakeToken (Milk)
+- `0x9F4c4AC66a6C4B3b22Da214Ca43B326FAB0826d1`
 
-## swap-contracts
+## MasterChef main pool contract.
+- `0xC26316b19117495E89c187339Ddb6E86f1e39f0c`
 
-Contains contracts used in exchange app.
+## 24 hour Timelock used in MasterChef contract.
+- `0xB311F9C475D449F8C523387df50af076Bc01774A`
 
-- UniswapV2Router02 router. `0x6728f3c8241C44Cc741C9553Ff7824ba9E932A4A`.
-- UniswapV2Pair ICLP pair.
-- UniswapV2Factory factory. `0xc8c9aB92AB70E954aF23c49f98aaCc1f94EBEeD7`.
-- UniswapV2ERC20 erc20 uniswap pair.
+## CreamShare (ICS)
+- `0xd4D19Bffda38349b2Bf4BAc5Fde6D14D281B72ba`
+
+## MilkShake: MilkShake CreamShare Pool contract.
+`0xC3ffBa6abFE05d086B87837ECb64705BA67DA438`
+
+- // Start at 5104111, pay 0.20476190476 Gelato per block. for 3 days.
+
+## MilkShake: MilkShake BNB Pool contract.
+
+`0xD4E0B91ad45E09d5aFf52Cc50bb9802EFaD01C3b`
+
+- // Start at 5190361, pay 0.00026785 BNB per block. for 30 days.
+
+# swap-contracts
+
+_Contracts used in exchange app._
+
+---
+
+## UniswapV2Router02
+
+- `0x6728f3c8241C44Cc741C9553Ff7824ba9E932A4A`.
+
+## UniswapV2Factory factory. 
+
+- `0xc8c9aB92AB70E954aF23c49f98aaCc1f94EBEeD7`.
+  
+## UniswapV2Pair ICLP pair (sample)
+
+- `0x0eAeFa041367E54d00103c00D85d326E2Eb8332a`
